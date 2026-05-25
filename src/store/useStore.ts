@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import { flows as initialFlows, gaps as initialGaps, analysts as initialAnalysts, kpiSummary } from '../data/mockData';
 import type { Flow, Gap, Analyst, FlowStatus } from '../data/mockData';
 import { useMemo } from 'react';
+import { useShallow } from 'zustand/react/shallow';
 
 export interface GlobalFilters {
   front: string;
@@ -62,10 +63,8 @@ export const useStore = create<AppState>((set) => ({
     })),
 }));
 
-export function useFilteredFlows(): Flow[] {
-  const flows = useStore(s => s.flows);
-  const filters = useStore(s => s.filters);
-  return useMemo(() => flows.filter(f => {
+function applyFilters(flows: Flow[], filters: GlobalFilters): Flow[] {
+  return flows.filter(f => {
     if (filters.front && f.front !== filters.front) return false;
     if (filters.area && f.area !== filters.area) return false;
     if (filters.analyst && f.analyst !== filters.analyst) return false;
@@ -74,5 +73,12 @@ export function useFilteredFlows(): Flow[] {
     if (filters.riskLevel && f.riskLevel !== filters.riskLevel) return false;
     if (filters.maturity && String(f.maturity) !== filters.maturity) return false;
     return true;
-  }), [flows, filters]);
+  });
+}
+
+export function useFilteredFlows(): Flow[] {
+  const { flows, filters } = useStore(
+    useShallow(s => ({ flows: s.flows, filters: s.filters }))
+  );
+  return useMemo(() => applyFilters(flows, filters), [flows, filters]);
 }
