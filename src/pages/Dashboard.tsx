@@ -12,7 +12,7 @@ import {
 import { KPICard } from '../components/ui/KPICard';
 import { Badge, StatusBadge, RiskBadge } from '../components/ui/Badge';
 import { ProgressBar } from '../components/ui/ProgressBar';
-import { useStore } from '../store/useStore';
+import { useStore, useFilteredFlows } from '../store/useStore';
 import { fmt, fmtCurrency, fmtHours, statusColor, criticalityColor, healthColor } from '../utils/format';
 import { frontDistribution, monthlyTrend, maturityRadar } from '../data/mockData';
 
@@ -27,8 +27,8 @@ const STATUS_COLORS = [
 ];
 
 export function Dashboard() {
-  const { filteredFlows, gaps, kpiSummary, analysts } = useStore(s => ({
-    filteredFlows: s.filteredFlows(),
+  const filteredFlows = useFilteredFlows();
+  const { gaps, kpiSummary, analysts } = useStore(s => ({
     gaps: s.gaps,
     kpiSummary: s.kpiSummary,
     analysts: s.analysts,

@@ -4,7 +4,7 @@ import {
   Cell, ComposedChart, Line, ReferenceLine, AreaChart, Area,
 } from 'recharts';
 import { Zap, TrendingUp, DollarSign, Users, Clock, ChevronRight, Play } from 'lucide-react';
-import { useStore } from '../store/useStore';
+import { useStore, useFilteredFlows } from '../store/useStore';
 import { Badge } from '../components/ui/Badge';
 import { fmt, fmtCurrency, fmtHours, fmtPercent } from '../utils/format';
 
@@ -20,7 +20,8 @@ const INTERVENTIONS = [
 ];
 
 export function Transformation() {
-  const { flows, kpiSummary } = useStore(s => ({ flows: s.filteredFlows(), kpiSummary: s.kpiSummary }));
+  const flows = useFilteredFlows();
+  const kpiSummary = useStore(s => s.kpiSummary);
   const [selected, setSelected] = useState<Set<string>>(new Set(['automate', 'eliminate_rework']));
   const [simulated, setSimulated] = useState(false);
 

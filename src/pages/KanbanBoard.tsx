@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { AlertCircle, Clock, User, Layers, MoreHorizontal } from 'lucide-react';
-import { useStore } from '../store/useStore';
+import { useStore, useFilteredFlows } from '../store/useStore';
 import { StatusBadge, CriticalityBadge } from '../components/ui/Badge';
 import { ProgressBar } from '../components/ui/ProgressBar';
 import { healthColor, statusColor } from '../utils/format';
@@ -18,7 +18,8 @@ const COLUMNS: { id: FlowStatus; label: string; color: string }[] = [
 ];
 
 export function KanbanBoard() {
-  const { flows, updateFlowStatus } = useStore(s => ({ flows: s.filteredFlows(), updateFlowStatus: s.updateFlowStatus }));
+  const flows = useFilteredFlows();
+  const updateFlowStatus = useStore(s => s.updateFlowStatus);
   const [dragging, setDragging] = useState<string | null>(null);
   const [dragOver, setDragOver] = useState<FlowStatus | null>(null);
 

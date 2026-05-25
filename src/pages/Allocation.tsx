@@ -2,7 +2,7 @@ import React, { useMemo } from 'react';
 import {
   PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend
 } from 'recharts';
-import { useStore } from '../store/useStore';
+import { useStore, useFilteredFlows } from '../store/useStore';
 import { Badge } from '../components/ui/Badge';
 import { ProgressBar } from '../components/ui/ProgressBar';
 import { fmt, fmtHours } from '../utils/format';
@@ -11,7 +11,8 @@ import { FRONTS } from '../data/mockData';
 const COLORS = ['#003B5C','#005A7A','#0077A3','#7A9A01','#96B80A','#B4D418','#d97706','#dc2626','#7c3aed','#2563eb'];
 
 export function Allocation() {
-  const { analysts, flows } = useStore(s => ({ analysts: s.analysts, flows: s.filteredFlows() }));
+  const flows = useFilteredFlows();
+  const analysts = useStore(s => s.analysts);
 
   const byFront = useMemo(() => {
     return FRONTS.slice(0, 8).map((front, i) => {

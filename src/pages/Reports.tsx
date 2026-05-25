@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { FileText, Mail, Presentation, BarChart2, Download, Eye, Wand2, ChevronRight, CheckCircle } from 'lucide-react';
-import { useStore } from '../store/useStore';
+import { useStore, useFilteredFlows } from '../store/useStore';
 import { Badge } from '../components/ui/Badge';
 import { ProgressBar } from '../components/ui/ProgressBar';
 import { fmt, fmtCurrency, fmtHours, healthColor } from '../utils/format';
@@ -20,8 +20,9 @@ const REPORT_TYPES = [
 ];
 
 export function Reports() {
-  const { flows, gaps, kpiSummary, analysts } = useStore(s => ({
-    flows: s.filteredFlows(), gaps: s.gaps, kpiSummary: s.kpiSummary, analysts: s.analysts,
+  const flows = useFilteredFlows();
+  const { gaps, kpiSummary, analysts } = useStore(s => ({
+    gaps: s.gaps, kpiSummary: s.kpiSummary, analysts: s.analysts,
   }));
   const [activeType, setActiveType] = useState<ReportType>('onepage');
   const [generating, setGenerating] = useState(false);

@@ -4,7 +4,7 @@ import {
   Cell, ReferenceLine, ComposedChart, Line, AreaChart, Area,
 } from 'recharts';
 import { AlertTriangle, TrendingUp, Users, Clock } from 'lucide-react';
-import { useStore } from '../store/useStore';
+import { useStore, useFilteredFlows } from '../store/useStore';
 import { Badge } from '../components/ui/Badge';
 import { ProgressBar } from '../components/ui/ProgressBar';
 import { fmt, fmtHours } from '../utils/format';
@@ -13,7 +13,7 @@ const MONTHS = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set'];
 
 export function Capacity() {
   const analysts = useStore(s => s.analysts);
-  const flows = useStore(s => s.filteredFlows());
+  const flows = useFilteredFlows();
   const [view, setView] = useState<'individual' | 'monthly' | 'heatmap'>('individual');
 
   const monthlyCapacity = MONTHS.map((m, i) => ({

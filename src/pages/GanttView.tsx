@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from 'react';
 import { ChevronLeft, ChevronRight, ZoomIn, ZoomOut, Calendar } from 'lucide-react';
-import { useStore } from '../store/useStore';
+import { useStore, useFilteredFlows } from '../store/useStore';
 import { healthColor, statusColor } from '../utils/format';
 import { StatusBadge } from '../components/ui/Badge';
 
@@ -12,7 +12,8 @@ function toDate(s: string) { return new Date(s); }
 function dayDiff(a: Date, b: Date) { return Math.round((b.getTime() - a.getTime()) / MS_PER_DAY); }
 
 export function GanttView() {
-  const flows = useStore(s => s.filteredFlows()).slice(0, 30);
+  const allFlows = useFilteredFlows();
+  const flows = allFlows.slice(0, 30);
   const [zoom, setZoom] = useState(1);
   const [offsetDays, setOffsetDays] = useState(0);
 

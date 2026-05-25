@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Wand2, ChevronRight, TrendingUp, AlertTriangle, Zap, Target, RefreshCw } from 'lucide-react';
-import { useStore } from '../store/useStore';
+import { useStore, useFilteredFlows } from '../store/useStore';
 import { fmt, fmtCurrency, fmtHours, healthColor } from '../utils/format';
 import { Badge } from '../components/ui/Badge';
 
@@ -24,8 +24,9 @@ const CATEGORY_CONFIG: Record<NarrativeCategory, { label: string; icon: typeof W
 };
 
 export function Storytelling() {
-  const { flows, gaps, kpiSummary, analysts } = useStore(s => ({
-    flows: s.filteredFlows(), gaps: s.gaps, kpiSummary: s.kpiSummary, analysts: s.analysts,
+  const flows = useFilteredFlows();
+  const { gaps, kpiSummary, analysts } = useStore(s => ({
+    gaps: s.gaps, kpiSummary: s.kpiSummary, analysts: s.analysts,
   }));
   const [generating, setGenerating] = useState(false);
   const [narratives, setNarratives] = useState<Narrative[] | null>(null);

@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from 'react';
 import { Filter, Search, ArrowUpDown, ChevronDown, ChevronUp, Eye, AlertCircle } from 'lucide-react';
-import { useStore } from '../store/useStore';
+import { useStore, useFilteredFlows } from '../store/useStore';
 import { StatusBadge, CriticalityBadge, RiskBadge } from '../components/ui/Badge';
 import { ProgressBar } from '../components/ui/ProgressBar';
 import { fmt, healthColor, statusColor } from '../utils/format';
@@ -22,7 +22,7 @@ const COLUMNS = [
 ];
 
 export function Tracking() {
-  const flows = useStore(s => s.filteredFlows());
+  const flows = useFilteredFlows();
   const [sort, setSort] = useState<{ key: string; dir: 'asc' | 'desc' }>({ key: 'healthScore', dir: 'asc' });
   const [search, setSearch] = useState('');
   const [expanded, setExpanded] = useState<string | null>(null);

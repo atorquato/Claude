@@ -3,7 +3,7 @@ import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
 } from 'recharts';
 import { AlertTriangle, Layers, Users, Settings, Database, GitBranch } from 'lucide-react';
-import { useStore } from '../store/useStore';
+import { useStore, useFilteredFlows } from '../store/useStore';
 import { Badge, CriticalityBadge } from '../components/ui/Badge';
 import type { GapType, Gap } from '../data/mockData';
 
@@ -22,7 +22,8 @@ const CAUSES = [
 ];
 
 export function GapsAnalysis() {
-  const { gaps, flows } = useStore(s => ({ gaps: s.gaps, flows: s.filteredFlows() }));
+  const flows = useFilteredFlows();
+  const gaps = useStore(s => s.gaps);
   const [selectedType, setSelectedType] = useState<GapType | null>(null);
   const [view, setView] = useState<'heatmap' | 'ishikawa' | 'matrix'>('heatmap');
 

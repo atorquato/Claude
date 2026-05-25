@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { flows as initialFlows, gaps as initialGaps, analysts as initialAnalysts, kpiSummary } from '../data/mockData';
 import type { Flow, Gap, Analyst, FlowStatus } from '../data/mockData';
+import { useMemo } from 'react';
 
 export interface GlobalFilters {
   front: string;
@@ -27,7 +28,6 @@ interface AppState {
   toggleSidebar: () => void;
   setActiveModule: (m: string) => void;
   updateFlowStatus: (id: string, status: FlowStatus) => void;
-  filteredFlows: () => Flow[];
 }
 
 const DEFAULT_FILTERS: GlobalFilters = {
@@ -42,7 +42,7 @@ const DEFAULT_FILTERS: GlobalFilters = {
   maturity: '',
 };
 
-export const useStore = create<AppState>((set, get) => ({
+export const useStore = create<AppState>((set) => ({
   flows: initialFlows,
   gaps: initialGaps,
   analysts: initialAnalysts,
@@ -60,18 +60,19 @@ export const useStore = create<AppState>((set, get) => ({
     set(s => ({
       flows: s.flows.map(f => f.id === id ? { ...f, status } : f)
     })),
-
-  filteredFlows: () => {
-    const { flows, filters } = get();
-    return flows.filter(f => {
-      if (filters.front && f.front !== filters.front) return false;
-      if (filters.area && f.area !== filters.area) return false;
-      if (filters.analyst && f.analyst !== filters.analyst) return false;
-      if (filters.status && f.status !== filters.status) return false;
-      if (filters.criticality && f.criticality !== filters.criticality) return false;
-      if (filters.riskLevel && f.riskLevel !== filters.riskLevel) return false;
-      if (filters.maturity && String(f.maturity) !== filters.maturity) return false;
-      return true;
-    });
-  },
 }));
+
+export function useFilteredFlows(): Flow[] {
+  const flows = useStore(s => s.flows);
+  const filters = useStore(s => s.filters);
+  return useMemo(() => flows.filter(f => {
+    if (filters.front && f.front !== filters.front) return false;
+    if (filters.area && f.area !== filters.area) return false;
+    if (filters.analyst && f.analyst !== filters.analyst) return false;
+    if (filters.status && f.status !== filters.status) return false;
+    if (filters.criticality && f.criticality !== filters.criticality) return false;
+    if (filters.riskLevel && f.riskLevel !== filters.riskLevel) return false;
+    if (filters.maturity && String(f.maturity) !== filters.maturity) return false;
+    return true;
+  }), [flows, filters]);
+}
