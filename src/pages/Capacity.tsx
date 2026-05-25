@@ -16,21 +16,25 @@ export function Capacity() {
   const flows = useFilteredFlows();
   const [view, setView] = useState<'individual' | 'monthly' | 'heatmap'>('individual');
 
-  const monthlyCapacity = MONTHS.map((m, i) => ({
+  const MONTHLY_MULTIPLIERS = [0.82, 0.91, 0.88, 0.95, 1.02, 0.97, 0.89, 1.05, 0.93];
+  const monthlyCapacity = useMemo(() => MONTHS.map((m, i) => ({
     month: m,
-    planned: Math.round(flows.reduce((s, f) => s + f.plannedHours, 0) / 9 * (0.8 + Math.random() * 0.4)),
-    realized: Math.round(flows.reduce((s, f) => s + f.realizedHours, 0) / 9 * (0.8 + Math.random() * 0.4)),
+    planned: Math.round(flows.reduce((s, f) => s + f.plannedHours, 0) / 9 * MONTHLY_MULTIPLIERS[i]),
+    realized: Math.round(flows.reduce((s, f) => s + f.realizedHours, 0) / 9 * MONTHLY_MULTIPLIERS[i] * 0.9),
     capacity: analysts.reduce((s, a) => s + a.capacity, 0),
-  }));
+  })), [flows, analysts]);
 
   const overloaded = analysts.filter(a => a.allocated > a.capacity);
   const idle = analysts.filter(a => a.allocated < a.capacity * 0.6);
   const atRisk = analysts.filter(a => a.burnoutRisk === 'Alto');
 
-  const heatData = analysts.map(a => ({
+  const heatData = useMemo(() => analysts.map((a, ai) => ({
     name: a.name.split(' ')[0],
-    ...Object.fromEntries(MONTHS.map((m, i) => [m, Math.round(a.capacity * (0.5 + Math.random() * 0.8))])),
-  }));
+    ...Object.fromEntries(MONTHS.map((m, mi) => {
+      const seed = ((ai + 1) * 41 + (mi + 1) * 17) % 100;
+      return [m, Math.round(a.capacity * (0.5 + (seed / 100) * 0.8))];
+    })),
+  })), [analysts]);
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
@@ -187,13 +191,14 @@ export function Capacity() {
                 <div key={m} style={{ flex: 1, textAlign: 'center', fontSize: 11, fontWeight: 600, color: '#667085', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{m}</div>
               ))}
             </div>
-            {analysts.map(a => (
+            {analysts.map((a, ai) => (
               <div key={a.id} style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
                 <div style={{ width: 110, fontSize: 12, fontWeight: 500, color: '#102A43', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                   {a.name.split(' ')[0]}
                 </div>
-                {MONTHS.map(m => {
-                  const hrs = Math.round(a.capacity * (0.4 + Math.random() * 0.8));
+                {MONTHS.map((m, mi) => {
+                  const seed = ((ai + 1) * 37 + (mi + 1) * 13) % 100;
+                  const hrs = Math.round(a.capacity * (0.4 + (seed / 100) * 0.8));
                   const pct = hrs / a.capacity;
                   const bg = pct > 1 ? '#dc2626' : pct > 0.9 ? '#d97706' : pct > 0.6 ? '#005A7A' : '#D9EAF4';
                   const textColor = pct > 0.6 ? '#FFFFFF' : '#003B5C';

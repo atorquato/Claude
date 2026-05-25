@@ -12,23 +12,32 @@ import { Transformation } from './pages/Transformation';
 import { Reports } from './pages/Reports';
 import { Storytelling } from './pages/Storytelling';
 import { Roadmap } from './pages/Roadmap';
+import { ErrorBoundary } from './components/ui/ErrorBoundary';
+
+function wrap(Component: React.ComponentType, name: string) {
+  return (
+    <ErrorBoundary name={name}>
+      <Component />
+    </ErrorBoundary>
+  );
+}
 
 function App() {
   return (
     <BrowserRouter>
       <AppLayout>
         <Routes>
-          <Route path="/" element={<Dashboard />} />
-          <Route path="/tracking" element={<Tracking />} />
-          <Route path="/kanban" element={<KanbanBoard />} />
-          <Route path="/gantt" element={<GanttView />} />
-          <Route path="/gaps" element={<GapsAnalysis />} />
-          <Route path="/capacity" element={<Capacity />} />
-          <Route path="/allocation" element={<Allocation />} />
-          <Route path="/transformation" element={<Transformation />} />
-          <Route path="/reports" element={<Reports />} />
-          <Route path="/storytelling" element={<Storytelling />} />
-          <Route path="/roadmap" element={<Roadmap />} />
+          <Route path="/" element={wrap(Dashboard, 'Dashboard Executivo')} />
+          <Route path="/tracking" element={wrap(Tracking, 'Acompanhamento')} />
+          <Route path="/kanban" element={wrap(KanbanBoard, 'Pipeline Kanban')} />
+          <Route path="/gantt" element={wrap(GanttView, 'Gantt Executivo')} />
+          <Route path="/gaps" element={wrap(GapsAnalysis, 'GAPs & Ishikawa')} />
+          <Route path="/capacity" element={wrap(Capacity, 'Capacidade')} />
+          <Route path="/allocation" element={wrap(Allocation, 'Alocação')} />
+          <Route path="/transformation" element={wrap(Transformation, 'Transformação')} />
+          <Route path="/reports" element={wrap(Reports, 'Report Center')} />
+          <Route path="/storytelling" element={wrap(Storytelling, 'Storytelling')} />
+          <Route path="/roadmap" element={wrap(Roadmap, 'Roadmap')} />
         </Routes>
       </AppLayout>
     </BrowserRouter>
